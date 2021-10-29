@@ -1,14 +1,14 @@
 /* ******************************************************
    ******************************************************
    **                                                  **
-   **--------------------------------------------------**                                                   
-   **--------------------------------------------------** 
-   **  Name : Question 1.1                             **                  
+   **--------------------------------------------------**
+   **--------------------------------------------------**
+   **  Name : Question 1.1                             **
    **  Desc : Creating user model and storing data     **
    **         in User collection                       **
    **--------------------------------------------------**
    **--------------------------------------------------**
-   **                                                  **           
+   **                                                  **
    ******************************************************
    ******************************************************
 */
@@ -18,6 +18,9 @@ const express = require ('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
+
+// Defining errors for conditions occurance during the response or request
+
 
 // Importing User model for user collection
 const User = require('../../models/User');
@@ -41,12 +44,12 @@ async (req,res) =>
          return res.status(400).json({ errors: errors.array() });
        }
 
-    // Collecting the data from Postman in json format with following field key-values pair on the basis User model as require 
-    const{firstName,email,lastName,userName,password,confrimPassword} = req.body; 
+    // Collecting the data from Postman in json format with following field key-values pair on the basis User model as require
+    const{firstName,email,lastName,userName,password,confrimPassword} = req.body;
 
     //Checking user exist or not by using existing usernames in the database
     try
-    { 
+    {
         let user = await User.findOne({email});
      // If user exist show status
         if(user)
@@ -71,8 +74,9 @@ async (req,res) =>
      // Checking password or confrimPassword are same
      if(password === req.body.confrimPassword)
       {
-         await user.save();     
+         await user.save();
          res.send('User has been registered');
+         console.log(user);
       }
     }
     catch(err)
@@ -80,8 +84,5 @@ async (req,res) =>
          console.error(err.message);
          res.status(500).send('Server error');
       }
-    
-    // show in the console data from postman of json format
-      console.log(req.body);
-    });    
+    });
 module.exports = router;

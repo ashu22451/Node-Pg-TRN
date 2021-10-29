@@ -1,16 +1,16 @@
 /* ******************************************************
    ******************************************************
    **                                                  **
-   **--------------------------------------------------**                                                   
-   **--------------------------------------------------** 
-   **  Name : Question 1.2                             **                  
+   **--------------------------------------------------**
+   **--------------------------------------------------**
+   **  Name : Question 1.2                             **
    **  Desc : Checking user exist or not on the basis  **
    **         Email address, after varified user       **
    **         return user id of User                   **
    **         collection(objectId)                     **
    **--------------------------------------------------**
    **--------------------------------------------------**
-   **                                                  **           
+   **                                                  **
    ******************************************************
    ******************************************************
 */
@@ -18,11 +18,12 @@
 // Importing the dependencies from package.json
 const express = require('express');
 const router = express.Router();
-const bcrypt = express('brcyptjs');
+const bcrypt = express('bcrypt');
 const{check, validationResult} = require('express-validator');
-
 // Importing User model for user collection
-const User = require('../../models/User');
+const User = require('../../models/User');      //      const salt = await bcrypt.genSalt(10);
+// user.password = await bcrypt.hash(password,salt);
+// console.log(c1);
 
 // For response/request for login route in ./route/api/login || validating the username and password
 router.post('/',
@@ -42,34 +43,46 @@ async (req,res) =>
 // Collecting the value of some needed field form Postman side
     const{userName,password} = req.body;
 
-// Create instance of User for use the data of User collection in database
-    user = new User(
-        {
-          userName,
-          password
-        }
-    );
-// Errors handing with the help of try-catch block when their occurance on the basis conditions    
-    try{
-// Reading and storing the datain local variable user in with query by giving condition username         
-         let user = await User.findOne({userName:req.body.userName});
-         //const salt = await bcrypt.genSalt(10);
-         //user.password = await bcrypt.hash(password,salt);   
-         if(user && user.password === req.body.password)
-          {
-            res.status(200).json("user exist || password ARE Match || Login Successfully ||  Access token:"+user._id);
-            console.log(user);
-          }
-         else
-          {
-            res.status(500).json("user doesn't exist");
-            console.log('user not exist Or password MisMatch');
-          }
-     }
-     catch(err)
-     {
-        console.error(err.message);
-        res.status(500).send('userName or password mismatch');
-     }                      
-}); 
+    const user = await User.findOne({userName:req.body.userName});
+
+    try
+    {
+
+      const bcrypt = require ('bcrypt');
+
+
+      const saltRounds = 10;
+      c = user.password;
+      c1 = req.body.password;
+
+      // Issue not resolve
+      var passwordd = c1;  // Original Password
+      var password2 = c;
+      bcrypt.hash(passwordd, saltRounds, function(err, hash) { // Salt + Hash
+      bcrypt.compare(password2, hash, function(err, result) {  // Compare
+    // if passwords match
+    if (result) {
+      res.status(200).json("user exist || password ARE Match || Login Successfully ||  Access token:"+user._id);
+      console.log(user);
+    }
+    // if passwords do not match
+    else {
+      res.status(500).json("user doesn't exist");
+      console.log('user not exist Or password MisMatch');
+    }
+  });
+});
+
+      //      const salt = await bcrypt.genSalt(10);
+      // user.password = await bcrypt.hash(password,salt);
+      // console.log(c1);
+
+    }catch(err){
+      console.error(err.message);
+      res.status(500).send('userName or password mismatch');
+        // console.log(p);
+
+    }
+
+});
 module.exports = router;
