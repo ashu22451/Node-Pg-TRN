@@ -16,11 +16,12 @@
 // Importing dependencies from package.json file
 const express = require ('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { check, validationResult } = require('express-validator');
+const config = require('config');
 
 // Defining errors for conditions occurance during the response or request
-
+const { check, validationResult } = require('express-validator');
 
 // Importing User model for user collection
 const User = require('../../models/User');
@@ -75,9 +76,28 @@ async (req,res) =>
      if(password === req.body.confrimPassword)
       {
          await user.save();
-         res.send('User has been registered');
-         console.log(user);
+         //res.send('User has been registered');
+         //console.log(user);
       }
+
+      // Defining Payload object for containing user data in authentication time to send back to fronted side
+      const payload = {
+        user:{
+          id: user.id
+        }
+      }
+
+      // Here accessing the json web token from default.json in confid directory
+      // Set time for token expire after login a user or logged how much time with this token
+      jwt.sign(
+        payload,
+        config.get('jwtToken'),
+        {expiresIn :3600},
+        (err, token) =>{
+          if(err) throw err;
+          res.json({token});
+        }
+      );
     }
     catch(err)
       {

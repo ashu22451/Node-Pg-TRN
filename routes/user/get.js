@@ -44,7 +44,6 @@ router.get('/',
    try
    {
       let user = await User.findOne({_id:req.body._id});
-
       if((user._id == req.body._id))
        {
          res.status(200).json('User details|| ObjectId :' +user._id+ ' First Name: '+user.firstName+' Last Name: '+user.lastName+' Username: '+user.userName+ ' Email: '+user.email+' password: '+user.password+ ' Confrim Password: '+user.confrimPassword);

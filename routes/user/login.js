@@ -18,71 +18,87 @@
 // Importing the dependencies from package.json
 const express = require('express');
 const router = express.Router();
-const bcrypt = express('bcrypt');
-const{check, validationResult} = require('express-validator');
-// Importing User model for user collection
-const User = require('../../models/User');      //      const salt = await bcrypt.genSalt(10);
-// user.password = await bcrypt.hash(password,salt);
-// console.log(c1);
+const bcrypt = require('bcrypt');
+const authentication = require('../../middleware/authentication');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
-// For response/request for login route in ./route/api/login || validating the username and password
+// Defining and importing the validation for errors handling
+const{check, validationResult} = require('express-validator');
+
+// Importing User model for user collection
+const User = require('../../models/User');
+
+// Request & Respose for this route
+router.get('/', authentication, async(req, res) =>{
+  // Accessing the user id of current user except password for security reason or more
+  try
+   {
+     const user = await User.findById(req.user.id).select('-password');
+     res.json(user);
+   }
+  catch(err)
+   {
+    console.error(err,message);
+    res.status(500).send('Server error');
+   }
+});
+
+// Checking that user exixts or not in the database
+// Taking email and password from postman side
+// Varifying the user email address and password is correct or not
+// Creating the new route post type
+
 router.post('/',
     [
-      check('userName','Please enter a valid username for login').not().isEmpty(),
-      check('password','Please enter the valid password for login').not().isEmpty()
+      check('email','Please enter a valid email address for login || Check email').isEmail(),
+      check('password','Please enter correct password for login || Check Password').exists()
     ],
-// Checking the data what comes from postman and validating them the basis User model constrant
-async (req,res) =>
- {
-    const errors = validationResult(req);
-    if(!errors.isEmpty())
-      {
-        return res.status(500).json({errors:errors.array() });
+    async (req, res) => {
+      const errors = validationResult(req);
+      if(!errors.isEmpty()){
+        res.status(400).json({errors: errors.array()});
       }
 
-// Collecting the value of some needed field form Postman side
-    const{userName,password} = req.body;
+      const{email, password} = req.body;
 
-    const user = await User.findOne({userName:req.body.userName});
+      try
+       {
+          let user = await User.findOne({email});
+          if(!user)
+           {
+             return res.status(400).json({errors:[{msg:'Invalid email or password || Enter the correct details'}]});
+           }
 
-    try
-    {
+           // Comparing the between user.password from user collection with user enter password from Postman
+           const isMatch = await bcrypt.compare(password, user.password);
 
-      const bcrypt = require ('bcrypt');
+           if(!isMatch)
+            {
+              return res.status(400).json({errors:[{msg:'Invalid Email or Password || Check'}]});
+            }
 
-
-      const saltRounds = 10;
-      c = user.password;
-      c1 = req.body.password;
-
-      // Issue not resolve
-      var passwordd = c1;  // Original Password
-      var password2 = c;
-      bcrypt.hash(passwordd, saltRounds, function(err, hash) { // Salt + Hash
-      bcrypt.compare(password2, hash, function(err, result) {  // Compare
-    // if passwords match
-    if (result) {
-      res.status(200).json("user exist || password ARE Match || Login Successfully ||  Access token:"+user._id);
-      console.log(user);
-    }
-    // if passwords do not match
-    else {
-      res.status(500).json("user doesn't exist");
-      console.log('user not exist Or password MisMatch');
-    }
+            // payload here for contain user data to
+            const payload = {
+              user : {
+                id: user.id
+              }
+            }
+            jwt.sign(
+              payload,
+              config.get('jwtToken'),
+              {expiresIn:3600},
+              (err, token) => {
+                if(err) throw err;
+                res.json({token});
+              }
+            );
+       }
+       catch(err)
+        {
+          console.error(err.message);
+          res.status(500).send('Server error!')
+        }
   });
-});
-
-      //      const salt = await bcrypt.genSalt(10);
-      // user.password = await bcrypt.hash(password,salt);
-      // console.log(c1);
-
-    }catch(err){
-      console.error(err.message);
-      res.status(500).send('userName or password mismatch');
-        // console.log(p);
-
-    }
-
-});
 module.exports = router;
+

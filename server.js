@@ -1,16 +1,16 @@
 /* ******************************************************
    ******************************************************
    **                                                  **
-   **--------------------------------------------------**                                                   
-   **--------------------------------------------------** 
-   **  Name : FIRST QUESTION IN MERNSTACK              **                  
+   **--------------------------------------------------**
+   **--------------------------------------------------**
+   **  Name : FIRST QUESTION IN MERNSTACK              **
    **  From : HangingPanda Private Limited             **
    **  DEV  : Pradip Golui                             **
    **  Technologies used : Nodejs, Expressjs,MongoDB   **
    **  Date : 24-10-2021                               **
    **--------------------------------------------------**
    **--------------------------------------------------**
-   **                                                  **           
+   **                                                  **
    ******************************************************
    ******************************************************
 */
@@ -24,17 +24,17 @@ const app = express();
 // MongoDB Connected Method Here
 connectDB();
 
-// Middleware || Body-Parser use 
+// Middleware || Body-Parser use
 app.use(express.json({exetended:false}));
 
-// using middleware functions for use APIs from routes.api directory
+// Using middleware functions for use APIs from routes.api directory
 app.use('/user/register', require('./routes/user/register'));
 app.use('/user/login',require('./routes/user/login'));
 app.use('/user/get',require('./routes/user/get'));
 app.use('/user/delete',require('./routes/user/delete'));
 //app.use('/user/list',require('./routes/user/list'));
 
-// Port create for localhost in local machine 
+// Port create for localhost in local machine
 const PORT = process.env.PORT || 5577;
 
 // Here port is listening from localhost in local machine
