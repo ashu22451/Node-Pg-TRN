@@ -2,57 +2,71 @@
  ***************************************************************************
  **                                                                       **
  **                     Question 1.5                                      **
+ **       Pagination:                                                     **
  **       Returning the 10 User From the User Collection From Database    **
  **                                                                       **
  ***************************************************************************
  ***************************************************************************
 */
-//Returning the 10 user to a request
-// Importing dependies from package.json 
+// Returning the 10 user to a request
+// Importing dependies from package.json
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const mongoose = ('mongoose');
+const bodyParser = required('body-paeser');
+const jsonParser = bodyParser.json();
+
 const{check, validationResult} = require('express-validator');
 
+// Importing the User models
 const User = require('../../models/User');
 
-// There is some issue || still working on it
-router.get('/',
-           [
-               check('pageNo','please enter the page no. that you to jump on that page.')
-           ],
+router.get('/send', async (req, res, next) => {
+  try
+  {
 
-           async (req,res) =>
-            {
-              const errors = validationResult(req);
-               if(!errors.isEmpty())
-                {
-                  res.status(400).json({errors:errors.array()});
-                }
+    const { page, size, sort} = req.query;
+    if(!page)
+     {
+       page = 1;
+     }
+     if(!size)
+      {
+        size = 10;
+      }
+        const limit =parseInt(size);
 
-            const { pageNo }= req.body;
+        const user = await User.find().sort(
+          { votes: 1, _id: 1}).limit(limit)
+          res.send({
+            page,
+            size,
+            Info: user,
 
-            // try
-            // {
-            //     let user = await User.find();
-            //     if(user && req.body.pageNo===1)
-            //      {
-            //         let i;
-            //         for(i=0;i<10;i++)
-            //          {
-            //             res.status(200).json(' This Access token Successfully Deleted from User Collections');
-            //              //console.log('firsName: '+user.firstName[i]);
-            //          } 
+          });
+        }
+          catch(err)
+           {
+             console.error(err.message);
+             res.status(500).json('Server error');
+           }
+         // Request & Respose for send
+         router.post('/send', jsonParser, (req,res) =>  {
+           req.body.password = bcrypt.hashSync(req.body.password,10);
 
-            //      }
-            // } 
-            catch(err)
-               {
-                res.status(400).json('Please enter the correct page number');
-                console.log('Wrong page number'); 
-              }
-       
-        });
+           let newUser = new User({
+             userName:req.body.userName,
+             password:req.body.password
+           })
 
-module.exports = router;            
-               
+           newUser.save().then(result=>{
+             console.log(result);
+           });
+
+         })
+  }
+});
+
+module.exports = router;
+
