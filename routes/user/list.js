@@ -9,7 +9,7 @@
  ***************************************************************************
 */
 // Returning the 10 user to a request
-// Importing dependies from package.json
+// Importing dependencies package.json
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -26,6 +26,7 @@ router.get('/send', async (req, res, next) => {
   try
   {
 
+    // Taking value of page , size, sort
     const { page, size, sort} = req.query;
     if(!page)
      {
@@ -66,7 +67,7 @@ router.get('/send', async (req, res, next) => {
 
          })
   }
-});
+);
 
 module.exports = router;
 

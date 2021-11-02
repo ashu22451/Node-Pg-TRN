@@ -1,0 +1,4 @@
+{
+  "mongoURI":"mongodb+srv://pradip123:pg123@question1.7yop8.mongodb.net/question1?retryWrites=true&w=majority",
+  "jwtToken":"mytoken"
+}
