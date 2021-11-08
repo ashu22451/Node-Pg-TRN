@@ -14,60 +14,32 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const mongoose = ('mongoose');
-const bodyParser = required('body-paeser');
-const jsonParser = bodyParser.json();
+
 
 const{check, validationResult} = require('express-validator');
 
 // Importing the User models
 const User = require('../../models/User');
 
-router.get('/send', async (req, res, next) => {
-  try
-  {
-
-    // Taking value of page , size, sort
-    const { page, size, sort} = req.query;
-    if(!page)
-     {
-       page = 1;
-     }
-     if(!size)
-      {
-        size = 10;
+router.get('/users',async(req, res, next)=>{
+  try{
+      let{page, size}= req.query;
+      if(!page){
+        page =1;
       }
-        const limit =parseInt(size);
+      if(!size){
+        size =10;
+      }
 
-        const user = await User.find().sort(
-          { votes: 1, _id: 1}).limit(limit)
-          res.send({
-            page,
-            size,
-            Info: user,
+      const limit = parseInt(size);
+      const skip = (page-1)*size;
+      let users = new User();
+       users = await User.find();
+      res.send(users);
+  }catch(err){
 
-          });
-        }
-          catch(err)
-           {
-             console.error(err.message);
-             res.status(500).json('Server error');
-           }
-         // Request & Respose for send
-         router.post('/send', jsonParser, (req,res) =>  {
-           req.body.password = bcrypt.hashSync(req.body.password,10);
-
-           let newUser = new User({
-             userName:req.body.userName,
-             password:req.body.password
-           })
-
-           newUser.save().then(result=>{
-             console.log(result);
-           });
-
-         })
+    console.error(err.message);
   }
-);
-
+});
 module.exports = router;
 
