@@ -34,7 +34,7 @@ app.use('/user/login',require('./routes/user/login'));
 app.use('/user/get',require('./routes/user/get'));
 app.use('/user/delete',require('./routes/user/delete'));
 app.use('/user/list',require('./routes/user/list'));
-
+app.use('/user/access_token',require('./routes/user/access_token'));
 
 // ort create for localhost in local machine
 const PORT = process.env.PORT || 5000;

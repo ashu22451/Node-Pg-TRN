@@ -22,6 +22,10 @@ const mongoose = require('mongoose');
 // Here definging the the Access_Token model for the document in collection in database
 
 const Access_TokenSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'user'
+  },
   user_id:{
     type: String,
     required: true
