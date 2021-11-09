@@ -1,4 +1,5 @@
-// importing the mongoose 
+// Defining the User model for registration the user details
+// importing the mongoose
 const mongoose = require('mongoose');
 
 //defining the user schema
