@@ -3,43 +3,54 @@
    **                                                  **
    **--------------------------------------------------**
    **--------------------------------------------------**
-   **  Name : Second QUESTION IN MERNSTACK              **
+   **  Name : Second QUESTION IN MERNSTACK   2.2       **
    **  From : HangingPanda Private Limited             **
    **  DEV  : Pradip Golui                             **
-   **  Technologies used : Nodejs, Expressjs,MongoDB   **
-   **  Date : 9-11-2021                               **
+   **  Desc : Creating Address model                   **
+   **  Date : 9-11-2021                                **
    **--------------------------------------------------**
    **--------------------------------------------------**
    **                                                  **
    ******************************************************
    ******************************************************
 */
-
-// Defining the the Access_Token for the login a user
-// Importing the dependencies for use mongoose liabries
+// Defining the Address models
+// Importing the dependencies for mongoose liabraries
 const mongoose = require('mongoose');
 
-// Here defining the the Access_Token model for the document in collection in database
-
-const Access_TokenSchema = new mongoose.Schema({
-  user: {
+// Defining the Address model
+const AddressSchema = new mongoose.Schema({
+  user:{
     type: mongoose.Schema.Types.ObjectId,
     ref:'user'
   },
-  user_id:{
+  access_token:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'access_token'
+  },
+  user_id: {
     type: String,
     required: true
   },
-  access_token:{
-    type: String,
-    require: true
+  address: {
+    type: [String],
+    required: true
   },
-  expiry:{
-    type:String
+  city:{
+    type: String,
+    required: true
+  },
+  state: {
+    type: String,
+    required: true
+  },
+  pincode: {
+    type: String,
+    required: true
+  },
+  phone_no: {
+    type: String,
+    required: true
   }
 });
-
-// Exporting the Access_Token Model
-module.exports = Access_Token = mongoose.model('access_token',Access_TokenSchema);
-
-
+module.exports = Address = mongoose.model('address',AddressSchema);

@@ -8,7 +8,7 @@
    **  DEV  : Pradip Golui                             **
    **  Technologies used : Nodejs, Expressjs,MongoDB   **
    **  Date : 9-11-2021                                **
-   **  Desc : Creating creating a access token using   **
+   **  Desc : Creating a access token using   **
    **         random number md5 for login user during  **
    **         login time for 1 hour time limit         **
    **--------------------------------------------------**
@@ -73,13 +73,13 @@ router.post('/',
          access_tokens.user_id = user_id;
          access_tokens.access_token = result;
          access_tokens.expiry = 3600;
-
     }
 
     // Random generator function calling here
      randomNumberGenerator();
 
      await access_tokens.save();
+
     }
     catch(err)
       {
